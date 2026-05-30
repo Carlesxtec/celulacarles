@@ -2,33 +2,42 @@
 <html lang="ca">
 <head>
     <meta charset="utf-8">
-    <title>La Cèl·lula 3D - Carles Fdez.</title>
+    <title>La Cèl·lula 3D Orgànica - Play For Dream PVR</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
 </head>
 <body>
 
     <a-scene webxr="optionalFeatures: google-local-floor; referenceSpaceType: local-floor">
         
-        <a-sky color="#0f172a"></a-sky> 
+        <a-sky color="#0f172a"></a-slate> 
         <a-plane position="0 0 0" rotation="-90 0 0" width="30" height="30" color="#1e293b"></a-plane>
-        
         <a-light type="ambient" color="#ffffff" intensity="0.6"></a-light>
         <a-light type="directional" color="#38bdf8" intensity="0.8" position="1 4 1"></a-light>
 
         <a-entity id="rig">
             <a-camera id="camera" look-controls position="0 1.6 0">
                 <a-cursor id="cursor-visual"
-                          animation__click="property: scale; startEvents: click; easing: easeInCubic; durability: 150; from: 0.1 0.1 0.1; to: 1 1 1"
-                          animation__fusing="property: scale; startEvents: fusing; easing: easeInCubic; durability: 1500; from: 1 1 1; to: 0.1 0.1 0.1"
                           raycaster="objects: .interactiva"
                           material="color: #38bdf8; shader: flat"
                           position="0 0 -1"
-                          geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03">
+                          geometry="primitive: ring; radiusInner: 0.015; radiusOuter: 0.025">
                 </a-cursor>
             </a-camera>
-            <a-entity laser-controls="hand: left" raycaster="objects: .interactiva" line="color: #38bdf8; opacity: 0.5"></a-entity>
-            <a-entity laser-controls="hand: right" raycaster="objects: .interactiva" line="color: #38bdf8; opacity: 0.5"></a-entity>
+            
+            <a-entity id="leftHand" 
+                      tracked-controls="hand: left; iterateObject3D: true"
+                      raycaster="objects: .interactiva; showLine: true" 
+                      line="color: #38bdf8; opacity: 0.8"
+                      generic-tracked-controller-controls="hand: left">
+            </a-entity>
+            
+            <a-entity id="rightHand" 
+                      tracked-controls="hand: right; iterateObject3D: true"
+                      raycaster="objects: .interactiva; showLine: true" 
+                      line="color: #38bdf8; opacity: 0.8"
+                      generic-tracked-controller-controls="hand: right">
+            </a-entity>
         </a-entity>
 
         <a-entity id="credits-on-floor" position="0 0.01 -0.6" rotation="-90 0 0">
@@ -89,7 +98,7 @@
     </a-scene>
 
     <script>
-        // Coordenades inicials exactes (arreglat el nom de la variable per evitar errors)
+        // Posicions de retorn de seguretat
         const posicionsOriginals = {
             "obj-nucli": {x: -0.4, y: 0.15, z: -1.1},
             "obj-cloroplast": {x: 0.4, y: 0.15, z: -1.1},
@@ -99,12 +108,12 @@
             "obj-paret": {x: 0.4, y: 0.15, z: -1.7}
         };
 
-        // Component d'A-Frame per moure els objectes cap al citoplasma central
+        // Component d'interacció universal per a disparar esdeveniments de clic i moure peces
         AFRAME.registerComponent('arrastrable', {
             init: function () {
                 var el = this.el;
                 
-                // Efecte visual en apuntar
+                // Animació visual en passar el punter per sobre
                 el.addEventListener('mouseenter', function () { 
                     el.setAttribute('scale', '1.1 1.1 1.1'); 
                 });
@@ -112,21 +121,20 @@
                     el.setAttribute('scale', '1 1 1'); 
                 });
 
-                // EN FER CLIC: L'objecte viatja exactament a sobre de la base blava (z = -1.5)
+                // Moviment immediat en prémer el gatell del comandament PVR o mirar fixament
                 el.addEventListener('click', function () {
                     var tx = 0; 
-                    var tz = -1.5; // Centre exacte del citoplasma
+                    var tz = -1.5; // Centre del citoplasma
                     var ty = 0.13;
                     
-                    // Repartiment dins de la cèl·lula perquè es vegi bonic i real
                     if(el.id === "obj-nucli") { tx = 0; tz = -1.5; ty = 0.15; }
                     else if(el.id === "obj-vacuola") { tx = 0.16; tz = -1.55; }
-                    else if(el.id === "obj-cloroplast") { tx = 0.14; tz = -1.40; }
+                    else if(el.id === "obj-cloroplast") { tx = 0.14; tz = -1.38; }
                     else if(el.id === "obj-mitocondri") { tx = -0.16; tz = -1.55; }
-                    else if(el.id === "obj-membrana") { tx = -0.14; tz = -1.40; }
+                    else if(el.id === "obj-membrana") { tx = -0.14; tz = -1.38; }
                     else if(el.id === "obj-paret") { 
                         tx = 0; tz = -1.5; ty = 0.12;
-                        el.setAttribute('scale', '5.4 1 5.4'); // S'engrandeix per tancar-ho tot
+                        el.setAttribute('scale', '5.4 1 5.4');
                     }
                     
                     el.setAttribute('position', {x: tx, y: ty, z: tz});
@@ -134,13 +142,13 @@
             }
         });
 
-        // ACCIÓ DEL BOTÓ REINICIAR (Torna tot al seu lloc lateral instantàniament)
+        // LÒGICA DEL BOTÓ REINICIAR
         document.getElementById('btn-reiniciar').addEventListener('click', function() {
             Object.keys(posicionsOriginals).forEach(function(id) {
                 var target = document.getElementById(id);
                 if (target) {
                     target.setAttribute('position', posicionsOriginals[id]);
-                    target.setAttribute('scale', '1 1 1'); // Reseteja la mida de la paret
+                    target.setAttribute('scale', '1 1 1');
                 }
             });
         });
