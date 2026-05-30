@@ -30,109 +30,106 @@
             <a-entity laser-controls="hand: right" raycaster="objects: .interactiva" line="color: #1abc9c"></a-entity>
         </a-entity>
 
-        <a-entity id="credits-on-floor" position="0 0.01 -0.7" rotation="-90 0 0">
-            <a-text value="LA CELLULA EN 3D" align="center" color="#16a085" width="2.2" bold="true"></a-text>
-            <a-text value="idea: Carles Fdez." align="center" color="#1e293b" width="1.6" position="0 -0.15 0"></a-text>
+        <a-entity id="credits-on-floor" position="0 0.01 -0.6" rotation="-90 0 0">
+            <a-text value="LA CEL.LULA EN 3D" align="center" color="#16a085" width="2" bold="true"></a-text>
+            <a-text value="idea: Carles Fdez." align="center" color="#1e293b" width="1.5" position="0 -0.15 0"></a-text>
         </a-entity>
 
-        <a-box id="btn-reiniciar" class="interactiva" position="-0.6 0.05 -0.7" width="0.2" height="0.1" depth="0.2" color="#dc2626">
+        <a-box id="btn-reiniciar" class="interactiva" position="-0.6 0.05 -0.6" width="0.2" height="0.1" depth="0.2" color="#dc2626">
             <a-text value="REINICIAR" align="center" color="#ffffff" width="1.2" position="0 0.06 0" rotation="-90 0 0"></a-text>
         </a-box>
 
-        <a-box position="0 0.05 -1.6" width="2.2" height="0.1" depth="1.3" color="#475569"></a-box>
+        <a-box position="0 0.05 -1.5" width="2.2" height="0.1" depth="1.3" color="#475569"></a-box>
         
-        <a-cylinder id="base-celula" position="0 0.11 -1.6" radius="0.4" height="0.02" color="#f1f5f9">
+        <a-cylinder id="base-celula" position="0 0.11 -1.5" radius="0.35" height="0.02" color="#f1f5f9">
             <a-text value="Citoplasma" align="center" color="#94a3b8" width="1.5" rotation="-90 0 0" position="0 0.01 0"></a-text>
         </a-cylinder>
 
 
-        <a-entity id="grupo-nucleo" class="interactiva" position="-0.5 0.2 -1.2" arrastrable>
-            <a-sphere radius="0.07" color="#ef4444"></a-sphere>
-            <a-plane position="0 0.12 0" width="0.2" height="0.06" color="#1e293b">
-                <a-text value="Nucli" align="center" color="#ffffff" width="1"></a-text>
-            </a-plane>
-        </a-entity>
+        <a-sphere id="obj-nucli" class="interactiva" position="-0.4 0.15 -1.2" radius="0.07" color="#ef4444" arrastrable>
+            <a-text value="Nucli" align="center" color="#1e293b" width="1.2" position="0 0.13 0" rotation="-45 0 0"></a-text>
+        </a-sphere>
 
-        <a-entity id="grupo-cloroplast" class="interactiva" position="0.5 0.2 -1.2" arrastrable>
-            <a-cylinder radius="0.03" height="0.1" color="#22c55e" rotation="45 0 0"></a-cylinder>
-            <a-plane position="0 0.12 0" width="0.27" height="0.06" color="#1e293b">
-                <a-text value="Cloroplast" align="center" color="#ffffff" width="1"></a-text>
-            </a-plane>
-        </a-entity>
+        <a-cylinder id="obj-cloroplast" class="interactiva" position="0.4 0.15 -1.2" radius="0.03" height="0.1" color="#22c55e" rotation="45 0 0" arrastrable>
+            <a-text value="Cloroplast" align="center" color="#1e293b" width="1.2" position="0 0.13 0" rotation="-45 0 0"></a-text>
+        </a-cylinder>
 
-        <a-entity id="grupo-mitocondria" class="interactiva" position="-0.7 0.2 -1.5" arrastrable>
-            <a-sphere radius="0.04" color="#f97316" scale="1 1 2"></a-sphere>
-            <a-plane position="0 0.12 0" width="0.3" height="0.06" color="#1e293b">
-                <a-text value="Mitocondria" align="center" color="#ffffff" width="1"></a-text>
-            </a-plane>
-        </a-entity>
+        <a-sphere id="obj-mitocondri" class="interactiva" position="-0.6 0.15 -1.5" radius="0.04" color="#f97316" scale="1 1 1.8" arrastrable>
+            <a-text value="Mitocondri" align="center" color="#1e293b" width="1.2" position="0 0.13 0" rotation="-45 0 0"></a-text>
+        </a-sphere>
 
-        <a-entity id="grupo-vacuola" class="interactiva" position="0.7 0.2 -1.5" arrastrable>
-            <a-box width="0.12" height="0.12" depth="0.12" color="#38bdf8"></a-box>
-            <a-plane position="0 0.12 0" width="0.22" height="0.06" color="#1e293b">
-                <a-text value="Vacuola" align="center" color="#ffffff" width="1"></a-text>
-            </a-plane>
-        </a-entity>
+        <a-box id="obj-vacuola" class="interactiva" position="0.6 0.15 -1.5" width="0.12" height="0.12" depth="0.12" color="#38bdf8" arrastrable>
+            <a-text value="Vacuola" align="center" color="#1e293b" width="1.2" position="0 0.13 0" rotation="-45 0 0"></a-text>
+        </a-box>
 
-        <a-entity id="grupo-membrana" class="interactiva" position="-0.3 0.2 -1.9" arrastrable>
-            <a-ring radius-inner="0.07" radius-outer="0.09" color="#1e3a8a" rotation="-90 0 0"></a-ring>
-            <a-plane position="0 0.12 0" width="0.32" height="0.06" color="#1e293b">
-                <a-text value="Membrana" align="center" color="#ffffff" width="1"></a-text>
-            </a-plane>
-        </a-entity>
+        <a-ring id="obj-membrana" class="interactiva" position="-0.4 0.15 -1.8" radius-inner="0.06" radius-outer="0.08" color="#1e3a8a" rotation="-90 0 0" arrastrable>
+            <a-text value="Membrana" align="center" color="#1e293b" width="1.2" position="0 0 0.1" rotation="45 0 0"></a-text>
+        </a-ring>
 
-        <a-entity id="grupo-paret" class="interactiva" position="0.3 0.2 -1.9" arrastrable>
-            <a-cylinder segments-radial="6" radius="0.09" height="0.02" color="#78350f" rotation="0 0 0"></a-cylinder>
-            <a-plane position="0 0.12 0" width="0.22" height="0.06" color="#1e293b">
-                <a-text value="Paret" align="center" color="#ffffff" width="1"></a-text>
-            </a-plane>
-        </a-entity>
+        <a-cylinder id="obj-paret" class="interactiva" position="0.4 0.15 -1.8" segments-radial="6" radius="0.08" height="0.03" color="#78350f" arrastrable>
+            <a-text value="Paret celular" align="center" color="#1e293b" width="1.2" position="0 0.13 0" rotation="-45 0 0"></a-text>
+        </a-cylinder>
 
     </a-scene>
 
     <script>
-        // Posiciones iniciales de fábrica para poder reiniciar el puzle
-        const posIniciales = {
-            "grupo-nucleo": {x: -0.3, y: 0.2, z: -1.2},
-            "grupo-cloroplast": {x: 0.3, y: 0.2, z: -1.2},
-            "grupo-mitocondria": {x: -0.6, y: 0.2, z: -1.5},
-            "grupo-vacuola": {x: 0.6, y: 0.2, z: -1.5},
-            "grupo-membrana": {x: -0.3, y: 0.2, z: -1.9},
-            "grupo-paret": {x: 0.3, y: 0.2, z: -1.9}
+        // Posicions originals exactes per a poder reiniciar
+        const posicionsOriginals = {
+            "obj-nucli": {x: -0.4, y: 0.15, z: -1.2},
+            "obj-cloroplast": {x: 0.4, y: 0.15, z: -1.2},
+            "obj-mitocondri": {x: -0.6, y: 0.15, z: -1.5},
+            "obj-vacuola": {x: 0.6, y: 0.15, z: -1.5},
+            "obj-membrana": {x: -0.4, y: 0.15, z: -1.8},
+            "obj-paret": {x: 0.4, y: 0.15, z: -1.8}
         };
 
+        // Lògica de moviment dels objectes cap al citoplasma
+        HTMLCollection.prototype.forEach = Array.prototype.forEach;
+        
         AFRAME.registerComponent('arrastrable', {
             init: function () {
                 var el = this.el;
                 
-                // Animación de selección
-                el.addEventListener('mouseenter', function () { el.setAttribute('scale', '1.1 1.1 1.1'); });
-                el.addEventListener('mouseleave', function () { el.setAttribute('scale', '1 1 1'); });
+                // Animació subtil en apuntar
+                el.addEventListener('mouseenter', function () { 
+                    el.setAttribute('opacity', '0.7'); 
+                });
+                el.addEventListener('mouseleave', function () { 
+                    el.setAttribute('opacity', '1.0'); 
+                });
 
-                // Al hacer click/gatillo: viaja al Citoplasma central
+                // En fer clic (amb gatillo o mirada), l'objecte va a la seva coordenada del citoplasma
                 el.addEventListener('click', function () {
                     var base = document.querySelector('#base-celula').getAttribute('position');
                     var tx = base.x, tz = base.z;
                     
-                    // Coordenadas organizadas dentro de la célula para que no se pisen
-                    if(el.id === "grupo-nucleo") { tx += 0; tz += 0; }
-                    else if(el.id === "grupo-cloroplast") { tx += 0.15; tz -= 0.1; }
-                    else if(el.id === "grupo-mitocondria") { tx -= 0.15; tz -= 0.1; }
-                    else if(el.id === "grupo-vacuola") { tx += 0.12; tz += 0.1; }
-                    else if(el.id === "grupo-membrana") { tx -= 0.15; tz += 0.1; }
-                    else if(el.id === "grupo-paret") { tx += 0; tz -= 0.18; }
+                    // Distribució a sobre del citoplasma blanc perquè no col·lisionin
+                    if(el.id === "obj-nucli") { tx += 0; tz += 0; }
+                    else if(el.id === "obj-cloroplast") { tx += 0.15; tz -= 0.1; }
+                    else if(el.id === "obj-mitocondri") { tx -= 0.15; tz -= 0.1; }
+                    else if(el.id === "obj-vacuola") { tx += 0.12; tz += 0.1; }
+                    else if(el.id === "obj-membrana") { tx -= 0.15; tz += 0.1; }
+                    else if(el.id === "obj-paret") { tx += 0; tz -= 0.18; }
                     
-                    el.setAttribute('position', {x: tx, y: base.y + 0.04, z: tz});
+                    el.setAttribute('position', {x: tx, y: base.y + 0.05, z: tz});
                 });
             }
         });
 
-        // LÓGICA DEL BOTÓN REINICIAR
+        // ACCIÓ DEL BOTÓ REINICIAR (Torna tot al seu lloc d'origen)
         document.querySelector('#btn-reiniciar').addEventListener('click', function() {
-            Object.keys(posIniciales).forEach(function(id) {
-                var elemento = document.getElementById(id);
-                if (elemento) {
-                    elemento.setAttribute('position', posIniciales[id]);
+            Object.keys(posicionsOriginals).forEach(function(id) {
+                var target = document.getElementById(id);
+                if (target) {
+                    target.setAttribute('position', posicionsOriginals[id]);
+                    // Si és la membrana, mantenim la rotació plana original
+                    if(id === "obj-membrana") {
+                        target.setAttribute('rotation', '-90 0 0');
+                    } else if(id === "obj-cloroplast") {
+                        target.setAttribute('rotation', '45 0 0');
+                    } else {
+                        target.setAttribute('rotation', '0 0 0');
+                    }
                 }
             });
         });
