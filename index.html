@@ -44,6 +44,19 @@
             </a-cylinder>
         </a-torus>
 
+        <a-entity id="celula-final-sorpresa" position="0 -5 -1.5" visible="false">
+            <a-sphere radius="0.35" color="#38bdf8" material="opacity: 0.4; transparent: true; roughness: 0.1" scale="1.2 0.9 1.1">
+                <a-sphere radius="0.1" color="#f43f5e" position="0 0 0" material="emissive: #be123c; roughness: 0.5">
+                    <a-sphere radius="0.03" color="#be123c" position="0.03 0.03 0.03"></a-sphere>
+                </a-sphere>
+                <a-sphere radius="0.04" color="#f97316" position="-0.15 0.05 0.1" scale="1 1 2" material="emissive: #ea580c"></a-sphere>
+                <a-sphere radius="0.04" color="#f97316" position="0.15 -0.05 -0.1" scale="1 1 1.8" material="emissive: #ea580c"></a-sphere>
+                <a-sphere radius="0.08" color="#7dd3fc" position="0 0.1 -0.15" scale="1 0.7 1" material="opacity: 0.8; transparent: true"></a-sphere>
+                <a-cone radius-bottom="0.06" radius-top="0.02" height="0.06" color="#16a34a" position="-0.1 -0.1 -0.1" rotation="30 45 10"></a-cone>
+            </a-sphere>
+            <a-text value="CÈL·LULA COMPLETADA!" font="roboto" align="center" color="#4ade80" width="2.5" position="0 0.5 0" rotation="-20 0 0" bold="true"></a-text>
+        </a-entity>
+
 
         <a-entity id="obj-nucli" position="-0.4 0.15 -1.1" dades-peça>
             <a-sphere radius="0.06" color="#f43f5e">
@@ -85,7 +98,6 @@
     </a-scene>
 
     <script>
-        // Taula estricta de tornada al lloc d'origen
         const posicionsOriginals = {
             "obj-nucli": {x: -0.4, y: 0.15, z: -1.1},
             "obj-cloroplast": {x: 0.4, y: 0.15, z: -1.1},
@@ -95,28 +107,23 @@
             "obj-paret": {x: 0.4, y: 0.15, z: -1.7}
         };
 
-        // Variable global on guardarem quin objecte té enfocat l'alumne actualment amb la mirada
+        // Comptador de peces col·locades
+        let pecesColocades = 0;
         var objecteEnfocat = null;
 
-        // Nou component d'A-Frame lliure de filtres de classe o col·lisió
         AFRAME.registerComponent('dades-peça', {
             init: function () {
                 var el = this.el;
 
-                // Quan el punt entra a sobre, guardem la referència i canviem escala per assegurar que es veu l'enllaç
                 el.addEventListener('mouseenter', function () {
                     objecteEnfocat = el;
                     el.setAttribute('scale', '1.2 1.2 1.2');
                 });
 
-                // En treure la mirada, netegem la selecció
                 el.addEventListener('mouseleave', function () {
-                    if (objecteEnfocat === el) {
-                        objecteEnfocat = null;
-                    }
-                    // Retornem a la mida base, vigilant de no espatllar si és la paret muntada
+                    if (objecteEnfocat === el) objecteEnfocat = null;
                     if (el.id === "obj-paret" && el.getAttribute('position').z === -1.5) {
-                        // Es manté gran
+                        // Mantenir gran si ja està col·locada
                     } else {
                         el.setAttribute('scale', '1 1 1');
                     }
@@ -124,23 +131,36 @@
             }
         });
 
-        // FUNCIO EXECUTORA DE MOVIMENT
         function mourePeça(el) {
             if (!el) return;
 
-            // Si s'ha clicat el botó de reiniciar
+            // BOTÓ REINICIAR (Neteja la sorpresa i torna tot al seu lloc)
             if (el.id === "btn-reiniciar") {
+                pecesColocades = 0;
+                
+                // Amaguem i baixem la cèl·lula sorpresa
+                var sorpresa = document.getElementById('celula-final-sorpresa');
+                sorpresa.setAttribute('visible', false);
+                sorpresa.setAttribute('position', '0 -5 -1.5');
+
+                // Tornem a fer visibles les peces de pràctica
                 Object.keys(posicionsOriginals).forEach(function(id) {
                     var target = document.getElementById(id);
                     if (target) {
                         target.setAttribute('position', posicionsOriginals[id]);
                         target.setAttribute('scale', '1 1 1');
+                        target.setAttribute('visible', true);
                     }
                 });
                 return;
             }
 
-            // Destins dins del citoplasma central
+            // Si la peça ja s'havia mogut al centre, ignora-la per no duplicar el comptador
+            if (el.getAttribute('position').z === -1.5 || (el.id === "obj-nucli" && el.getAttribute('position').z === -1.5)) {
+                if (el.id !== "btn-reiniciar") return;
+            }
+
+            // Destins de muntatge
             var tx = 0, tz = -1.5, ty = 0.13;
             
             if(el.id === "obj-nucli") { tx = 0; tz = -1.5; ty = 0.15; }
@@ -154,20 +174,34 @@
             }
             
             el.setAttribute('position', {x: tx, y: ty, z: tz});
+            
+            // Sumem una peça col·locada amb èxit
+            pecesColocades++;
+
+            // COMPROVACIÓ FINAL: Si s'han col·locat les 6 peces...
+            if (pecesColocades >= 6) {
+                setTimeout(function() {
+                    // 1. Amaguem les peces soltes perquè no molestin
+                    Object.keys(posicionsOriginals).forEach(function(id) {
+                        document.getElementById(id).setAttribute('visible', false);
+                    });
+
+                    // 2. Fem aparèixer de cop la super cèl·lula final orgànica fluorescent al mig de la taula
+                    var sorpresa = document.getElementById('celula-final-sorpresa');
+                    sorpresa.setAttribute('position', '0 0.35 -1.5'); // Pujat a l'alçada dels ulls
+                    sorpresa.setAttribute('visible', true);
+                }, 600); // Petita pausa per assaborir l'últim moviment
+            }
         }
 
-        // CONTROL DEFINITIU DEL GATELL DELS COMANDAMENTS (A NIVELL DE VISOR)
-        // Aquest mètode escolta l'activació del polsador a nivell global del navegador WebXR 
-        // de les teves Play For Dream i executa el moviment allà on estiguis mirant de veritat.
+        // CONTROL DEL GATELL
         window.addEventListener('click', function() {
             if (objecteEnfocat) {
                 mourePeça(objecteEnfocat);
             }
         });
 
-        // Suport alternatiu extra per a la pulsació del gatell físic en entorns virtuals tancats
         document.addEventListener('keydown', function(e) {
-            // Molts visors mapegen el gatell com si fos el botó "Espai" o "Enter" en entorns web
             if ((e.keyCode === 32 || e.keyCode === 13) && objecteEnfocat) {
                 mourePeça(objecteEnfocat);
             }
