@@ -2,7 +2,7 @@
 <html lang="ca">
 <head>
     <meta charset="utf-8">
-    <title>La Cèl·lula 3D Interactiva - Carles Fdez.</title>
+    <title>La Cèl·lula 3D - Carles Fdez.</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
 </head>
@@ -16,10 +16,15 @@
         <a-light type="directional" color="#38bdf8" intensity="0.8" position="1 4 1"></a-light>
 
         <a-entity id="rig">
-            <a-camera id="camera" look-controls position="0 1.6 0"></a-camera>
-            
-            <a-entity laser-controls="hand: left" raycaster="objects: .interactiva; far: 10" line="color: #38bdf8; opacity: 0.8"></a-entity>
-            <a-entity laser-controls="hand: right" raycaster="objects: .interactiva; far: 10" line="color: #38bdf8; opacity: 0.8"></a-entity>
+            <a-camera id="camera" look-controls position="0 1.6 0">
+                <a-cursor id="cursor-visual"
+                          raycaster="objects: .interactiva"
+                          material="color: #38bdf8; shader: flat"
+                          position="0 0 -1"
+                          geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+                          cursor="fuse: false">
+                </a-cursor>
+            </a-camera>
         </a-entity>
 
         <a-entity id="credits-on-floor" position="0 0.01 -0.6" rotation="-90 0 0">
@@ -64,7 +69,7 @@
 
         <a-entity id="obj-vacuola" class="interactiva" position="0.6 0.15 -1.4" arrastrable>
             <a-sphere radius="0.06" color="#38bdf8" scale="1.3 0.8 1" material="opacity: 0.7; roughness: 0.1"></a-sphere>
-            <a-text value="Vacúola" font="roboto" align="center" color="#ffffff" width="1.2" position="0 0.1 0" rotation="-45 0 0"></a-text>
+            <a-text value="Vacuola" font="roboto" align="center" color="#ffffff" width="1.2" position="0 0.1 0" rotation="-45 0 0"></a-text>
         </a-entity>
 
         <a-entity id="obj-membrana" class="interactiva" position="-0.4 0.15 -1.7" arrastrable>
@@ -80,7 +85,7 @@
     </a-scene>
 
     <script>
-        // Taula de posicions per quan premem reiniciar
+        // Taula fixa de posicions originals
         const posicionsOriginals = {
             "obj-nucli": {x: -0.4, y: 0.15, z: -1.1},
             "obj-cloroplast": {x: 0.4, y: 0.15, z: -1.1},
@@ -90,20 +95,20 @@
             "obj-paret": {x: 0.4, y: 0.15, z: -1.7}
         };
 
-        // Component d'escolta per al clic del comandament físic
+        // Lògica de reacció per al moviment de les peces
         AFRAME.registerComponent('arrastrable', {
             init: function () {
                 var el = this.el;
                 
-                // Reacció lumínica o de mida en apuntar amb el làser
-                el.addEventListener('raycaster-intersection', function () {
-                    el.setAttribute('scale', '1.1 1.1 1.1');
+                // Animació de tamany quan es col·loca el punt rodó a sobre
+                el.addEventListener('mouseenter', function () { 
+                    el.setAttribute('scale', '1.1 1.1 1.1'); 
                 });
-                el.addEventListener('raycaster-intersection-cleared', function () {
-                    el.setAttribute('scale', '1 1 1');
+                el.addEventListener('mouseleave', function () { 
+                    el.setAttribute('scale', '1 1 1'); 
                 });
 
-                // NOMÉS es mou si s'apunta amb el raig i es prem el gatell (esdeveniment 'click')
+                // Acció en rebre el clic forçat pel comandament
                 el.addEventListener('click', function () {
                     var tx = 0; 
                     var tz = -1.5; 
@@ -124,7 +129,25 @@
             }
         });
 
-        // BOTÓ REINICIAR (També responent al gatell)
+        // EL TRUC PER LES PVR: Escoltador d'esdeveniments WebXR natius per al gatell
+        // Quan la escena WebXR detecta que es prem el gatell de qualsevol comandament,
+        // busquem el punt de la mirada i li forgem el clic sintètic.
+        var sceneEl = document.querySelector('a-scene');
+        sceneEl.addEventListener('enter-vr', function () {
+            var session = sceneEl.xrSession;
+            if (session) {
+                session.addEventListener('select', function () {
+                    var cursor = document.querySelector('#cursor-visual');
+                    // Si el punt rodó està apuntant a una peça vàlida, l'activa al moment
+                    if (cursor && cursor.components.raycaster && cursor.components.raycaster.intersectedEls.length > 0) {
+                        var elApuntat = cursor.components.raycaster.intersectedEls[0];
+                        elApuntat.emit('click');
+                    }
+                });
+            }
+        });
+
+        // LÒGICA DE REINICIAR (També respon si el mires i prems el gatell)
         document.getElementById('btn-reiniciar').addEventListener('click', function() {
             Object.keys(posicionsOriginals).forEach(function(id) {
                 var target = document.getElementById(id);
