@@ -5,7 +5,6 @@
     <title>La Célula 3D - Carles Fdez.</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <link rel="manifest" href="manifest.json">
-    
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
 </head>
 <body>
@@ -21,8 +20,6 @@
                 <a-cursor id="cursor-visual"
                           animation__click="property: scale; startEvents: click; easing: easeInCubic; durability: 150; from: 0.1 0.1 0.1; to: 1 1 1"
                           animation__fusing="property: scale; startEvents: fusing; easing: easeInCubic; durability: 1500; from: 1 1 1; to: 0.1 0.1 0.1"
-                          event-set__mouseenter="_event: mouseenter; color: #1abc9c"
-                          event-set__mouseleave="_event: mouseleave; color: black"
                           raycaster="objects: .interactiva"
                           material="color: black; shader: flat"
                           position="0 0 -1"
@@ -34,31 +31,30 @@
             <a-entity laser-controls="hand: right" raycaster="objects: .interactiva" line="color: #1abc9c"></a-entity>
         </a-entity>
 
-        <a-entity position="0 2.2 -2.5">
+        <a-entity position="0 1.8 -2.5">
             <a-text value="LA CELULA EN 3D" align="center" color="#16a085" width="4" font="default" bold="true"></a-text>
             <a-text value="idea: Carles Fdez." align="center" color="#1e293b" width="3" position="0 -0.35 0" font="default"></a-text>
         </a-entity>
 
-        <a-box position="0 0.8 -1.5" width="1.6" height="0.1" depth="1" color="#475569"></a-box>
-        <a-cylinder id="base-celula" position="0 0.86 -1.5" radius="0.3" height="0.02" color="#f1f5f9"></a-cylinder>
+        <a-box position="0 0.4 -1.8" width="1.6" height="0.1" depth="1" color="#475569"></a-box>
+        
+        <a-cylinder id="base-celula" position="0 0.46 -1.8" radius="0.3" height="0.02" color="#f1f5f9"></a-cylinder>
 
-        <a-sphere class="interactiva" id="nucleo" position="-0.3 1 -1.2" radius="0.08" color="#ef4444" arrastrable>
+        <a-sphere class="interactiva" id="nucleo" position="-0.3 0.6 -1.5" radius="0.08" color="#ef4444" arrastrable>
             <a-text value="Nucleo" align="center" color="#ffffff" width="1.2" position="0 0.15 0"></a-text>
         </a-sphere>
 
-        <a-cylinder class="interactiva" id="cloroplasto" position="0.3 1 -1.2" radius="0.04" height="0.12" color="#22c55e" arrastrable>
+        <a-cylinder class="interactiva" id="cloroplasto" position="0.3 0.6 -1.5" radius="0.04" height="0.12" color="#22c55e" arrastrable>
             <a-text value="Cloroplasto" align="center" color="#ffffff" width="1.2" position="0 0.15 0"></a-text>
         </a-cylinder>
 
     </a-scene>
 
     <script>
-        // Lógica de interacción universal adaptada a primaria
         AFRAME.registerComponent('arrastrable', {
             init: function () {
                 var el = this.el;
                 
-                // Efecto visual al apuntar (apoya visualmente al alumno)
                 el.addEventListener('mouseenter', function () {
                     el.setAttribute('scale', '1.2 1.2 1.2');
                 });
@@ -66,10 +62,10 @@
                     el.setAttribute('scale', '1 1 1');
                 });
 
-                // Acción al hacer click (con el gatillo del mando o manteniendo la mirada fija)
                 el.addEventListener('click', function () {
                     var base = document.querySelector('#base-celula').getAttribute('position');
                     
+                    // Ahora vuelan y se quedan a la nueva altura de la mesa (base.y + 0.05)
                     if(el.id === "nucleo") {
                         el.setAttribute('position', {x: base.x, y: base.y + 0.05, z: base.z});
                     } else if(el.id === "cloroplasto") {
