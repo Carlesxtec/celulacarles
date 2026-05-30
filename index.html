@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>La Célula 3D - Carles Fdez.</title>
+<meta name="description" content="PWA WebXR interactiva para aprender la célula en
+primaria">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#16a085">
+<!-- Librerías WebXR (A-Frame y físicas básicas para agarrar objetos) -->
+<script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframeextras.
+min.js"></script>
+<script src="https://unpkg.com/super-hands@^3.0.3/dist/super-hands.min.js"></script>
+</head>
+<body>
+<a-scene webxr="optionalFeatures: google-local-floor;" grabbable>
+<a-assets>
+<!-- Aquí se cargan los modelos 3D de los orgánulos (.gltf) -->
+<!-- <a-asset-item id="nucleo" src="models/nucleo.gltf"></a-asset-item> -->
+</a-assets>
+<!-- Entorno virtual -->
+<a-sky color="#eceff1"></a-sky>
+Entorno Virtual para Gafas YVR — Primaria — Idea: Carles Fdez.
+•
+•
+•
+•
+<a-plane position="0 0 0" rotation="-90 0 0" width="30" height="30" color="#b0bec5"></aplane>
+<!-- TÍTULO Y CRÉDITOS EXIGIDOS EN EL ESPACIO 3D -->
+<a-entity position="0 2.5 -3">
+<a-text value="LA CELULA EN 3D" align="center" color="#16a085" width="6"
+font="mozillavr"></a-text>
+<a-text value="idea: Carles Fdez." align="center" color="#34495e" width="4"
+position="0 -0.5 0" font="mozillavr"></a-text>
+</a-entity>
+<!-- MESA DE TRABAJO -->
+<a-box position="0 0.75 -1.5" width="2" height="0.1" depth="1" color="#7f8c8d"></a-box>
+<!-- BASE DE LA CÉLULA (Citoplasma receptor) -->
+<a-cylinder position="0 0.81 -1.5" radius="0.4" height="0.02" color="#e8f8f5"></acylinder>
+<!-- PIEZA INTERACTIVA DE EJEMPLO: EL NÚCLEO (Esfera roja que el alumno puede agarrar)
+-->
+<a-sphere position="0.4 0.9 -1.3" radius="0.1" color="#e74c3c"
+hoverable grabbable stretchable
+class="interactiva"
+id="pieza-nucleo">
+</a-sphere>
+<!-- MANDOS DE LAS GAFAS YVR CON SOPORTE DE AGARRE -->
+<a-entity sphere-collider="objects: .interactiva" super-hands hand-controls="hand:
+left"></a-entity>
+<a-entity sphere-collider="objects: .interactiva" super-hands hand-controls="hand:
+right"></a-entity>
+</a-scene>
+<script>
+// Registro del Service Worker para funcionamiento offline
+if ('serviceWorker' in navigator) {
+window.addEventListener('load', () => {
+navigator.serviceWorker.register('sw.js');
+});
+}
+</script>
+</body>
+</html>

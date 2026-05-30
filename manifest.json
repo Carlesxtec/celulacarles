@@ -1,0 +1,23 @@
+{
+"name": "La Célula 3D - Ciencias Primaria",
+"short_name": "Célula VR",
+"description": "Puzle didáctico interactivo de la célula animal y vegetal. Idea: Carles
+Fdez.",
+"start_url": "index.html",
+"display": "standalone",
+"background_color": "#f4f7f6",
+"theme-color": "#16a085",
+"orientation": "landscape",
+"icons": [
+{
+"src": "icons/icon-192.png",
+"sizes": "192x192",
+"type": "image/png"
+},
+{
+"src": "icons/icon-512.png",
+"sizes": "512x512",
+"type": "image/png"
+}
+]
+}
