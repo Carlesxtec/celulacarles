@@ -5,76 +5,75 @@
     <title>La Célula 3D - Carles Fdez.</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#16a085">
     
-    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-    <script src="https://unpkg.com/aframe-event-set-component@5.0.0/dist/aframe-event-set-component.min.js"></script>
-    
-    <style>
-        /* Forzar que el botón de "Entrar en VR" sea visible en pantallas rebeldes */
-        .a-enter-vr-button { background-color: #16a085 !important; }
-    </style>
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
 </head>
 <body>
-    <a-scene webxr="optionalFeatures: google-local-floor; referenceSpaceType: local-floor">
+
+    <a-scene webxr="optionalFeatures: google-local-floor; referenceSpaceType: local">
         
         <a-sky color="#a0c4ff"></a-sky>
         <a-plane position="0 0 0" rotation="-90 0 0" width="30" height="30" color="#cbd5e1"></a-plane>
         <a-light type="ambient" color="#ffffff" intensity="0.9"></a-light>
 
-        <a-entity id="rig" position="0 0 0">
-            <a-camera id="camera" look-controls position="0 1.6 0"></a-camera>
+        <a-entity id="rig">
+            <a-camera id="camera" position="0 1.6 0" look-controls>
+                <a-cursor id="cursor-visual"
+                          animation__click="property: scale; startEvents: click; easing: easeInCubic; durability: 150; from: 0.1 0.1 0.1; to: 1 1 1"
+                          animation__fusing="property: scale; startEvents: fusing; easing: easeInCubic; durability: 1500; from: 1 1 1; to: 0.1 0.1 0.1"
+                          event-set__mouseenter="_event: mouseenter; color: #1abc9c"
+                          event-set__mouseleave="_event: mouseleave; color: black"
+                          raycaster="objects: .interactiva"
+                          material="color: black; shader: flat"
+                          position="0 0 -1"
+                          geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03">
+                </a-cursor>
+            </a-camera>
             
-            <a-entity laser-controls="hand: left" raycaster="objects: .interactiva; far: 5" line="color: #1abc9c; opacity: 0.75"></a-entity>
-            <a-entity laser-controls="hand: right" raycaster="objects: .interactiva; far: 5" line="color: #1abc9c; opacity: 0.75"></a-entity>
+            <a-entity laser-controls="hand: left" raycaster="objects: .interactiva" line="color: #1abc9c"></a-entity>
+            <a-entity laser-controls="hand: right" raycaster="objects: .interactiva" line="color: #1abc9c"></a-entity>
         </a-entity>
 
-        <a-entity position="0 2.2 -2">
+        <a-entity position="0 2.2 -2.5">
             <a-text value="LA CELULA EN 3D" align="center" color="#16a085" width="4" font="default" bold="true"></a-text>
             <a-text value="idea: Carles Fdez." align="center" color="#1e293b" width="3" position="0 -0.35 0" font="default"></a-text>
         </a-entity>
 
         <a-box position="0 0.8 -1.5" width="1.6" height="0.1" depth="1" color="#475569"></a-box>
-        
-        <a-cylinder id="base-celula" position="0 0.86 -1.5" radius="0.3" height="0.02" color="#f1f5f9">
-            <a-text value="Suelte aqui" align="center" color="#475569" width="1.5" rotation="-90 0 0" position="0 0.02 0"></a-text>
-        </a-cylinder>
+        <a-cylinder id="base-celula" position="0 0.86 -1.5" radius="0.3" height="0.02" color="#f1f5f9"></a-cylinder>
 
-        <a-sphere class="interactiva" id="nucleo" position="-0.4 1 -1.3" radius="0.1" color="#ef4444" arrastrable>
+        <a-sphere class="interactiva" id="nucleo" position="-0.3 1 -1.2" radius="0.08" color="#ef4444" arrastrable>
             <a-text value="Nucleo" align="center" color="#ffffff" width="1.2" position="0 0.15 0"></a-text>
         </a-sphere>
 
-        <a-cylinder class="interactiva" id="cloroplasto" position="0.4 1 -1.3" radius="0.05" height="0.15" color="#22c55e" rotation="45 0 45" arrastrable>
+        <a-cylinder class="interactiva" id="cloroplasto" position="0.3 1 -1.2" radius="0.04" height="0.12" color="#22c55e" arrastrable>
             <a-text value="Cloroplasto" align="center" color="#ffffff" width="1.2" position="0 0.15 0"></a-text>
         </a-cylinder>
 
     </a-scene>
 
     <script>
+        // Lógica de interacción universal adaptada a primaria
         AFRAME.registerComponent('arrastrable', {
             init: function () {
                 var el = this.el;
                 
-                // Al apuntar al objeto con el mando
+                // Efecto visual al apuntar (apoya visualmente al alumno)
                 el.addEventListener('mouseenter', function () {
-                    el.setAttribute('material', 'opacity', 0.7);
+                    el.setAttribute('scale', '1.2 1.2 1.2');
                 });
-                
-                // Al quitar el puntero
                 el.addEventListener('mouseleave', function () {
-                    el.setAttribute('material', 'opacity', 1.0);
+                    el.setAttribute('scale', '1 1 1');
                 });
 
-                // Al pulsar el gatillo del mando YVR (Click)
-                el.addEventListener('click', function (evt) {
-                    // Lógica simple para primaria: Si haces click, viaja automáticamente a la base
+                // Acción al hacer click (con el gatillo del mando o manteniendo la mirada fija)
+                el.addEventListener('click', function () {
                     var base = document.querySelector('#base-celula').getAttribute('position');
                     
-                    // Colocar orgánulo en la célula con una pequeña variación para que no se pisen
                     if(el.id === "nucleo") {
                         el.setAttribute('position', {x: base.x, y: base.y + 0.05, z: base.z});
                     } else if(el.id === "cloroplasto") {
-                        el.setAttribute('position', {x: base.x + 0.15, y: base.y + 0.05, z: base.z - 0.05});
+                        el.setAttribute('position', {x: base.x + 0.1, y: base.y + 0.05, z: base.z - 0.05});
                     }
                 });
             }
