@@ -48,9 +48,9 @@
             </a-cylinder>
         </a-torus>
 
-        <a-entity id="pantalla-final" position="0 1.5 -2.5" visible="false">
-            <a-image src="#imatge-final" width="3" height="1.7" shadow></a-image>
-            <a-text value="CÈL·LULA COMPLETADA AMB ÈXIT!" font="roboto" align="center" color="#4ade80" width="3" position="0 1 0.1" bold="true"></a-text>
+        <a-entity id="pantalla-final" position="0 1.5 -2.5" visible="false" imatge-zoomable>
+            <a-image src="#imatge-final" width="3" height="1.7" id="quadre-imatge"></a-image>
+            <a-text value="CEL.LULA COMPLETADA AMB EXIT!" font="roboto" align="center" color="#4ade80" width="3" position="0 1 0.1" bold="true"></a-text>
         </a-entity>
 
 
@@ -71,7 +71,7 @@
 
         <a-entity id="obj-vacuola" position="0.6 0.15 -1.4" dades-peça>
             <a-sphere radius="0.06" color="#38bdf8" scale="1.3 0.8 1" material="opacity: 0.7"></a-sphere>
-            <a-text value="Vacúola" font="roboto" align="center" color="#ffffff" width="1.2" position="0 0.1 0" rotation="-45 0 0"></a-text>
+            <a-text value="Vacuola" font="roboto" align="center" color="#ffffff" width="1.2" position="0 0.1 0" rotation="-45 0 0"></a-text>
         </a-entity>
 
         <a-entity id="obj-membrana" position="-0.4 0.15 -1.7" dades-peça>
@@ -99,6 +99,7 @@
         let pecesColocades = 0;
         var objecteEnfocat = null;
 
+        // Gestió de les peces del trencaclosques
         AFRAME.registerComponent('dades-peça', {
             init: function () {
                 var el = this.el;
@@ -115,13 +116,36 @@
             }
         });
 
+        // COMPONENT NOU: Si l'alumne mira la imatge final amb el cap, aquesta s'apropa i creix
+        AFRAME.registerComponent('imatge-zoomable', {
+            init: function () {
+                var el = this.el;
+                
+                el.addEventListener('mouseenter', function () {
+                    // S'apropa a la càmera (passa de z: -2.5 a z: -1.8) i es fa una mica més gran
+                    el.setAttribute('position', '0 1.5 -1.8');
+                    el.setAttribute('scale', '1.1 1.1 1.1');
+                });
+
+                el.addEventListener('mouseleave', function () {
+                    // Torna a la seva posició de repòs en treure la mirada
+                    el.setAttribute('position', '0 1.5 -2.5');
+                    el.setAttribute('scale', '1 1 1');
+                });
+            }
+        });
+
         function mourePeça(el) {
             if (!el) return;
 
-            // REINICIAR: Torna tot a l'estat inicial i amaga la imatge
+            // REINICIAR
             if (el.id === "btn-reiniciar") {
                 pecesColocades = 0;
-                document.getElementById('pantalla-final').setAttribute('visible', false);
+                var pantalla = document.getElementById('pantalla-final');
+                pantalla.setAttribute('visible', false);
+                pantalla.setAttribute('position', '0 1.5 -2.5');
+                pantalla.setAttribute('scale', '1 1 1');
+
                 Object.keys(posicionsOriginals).forEach(function(id) {
                     var target = document.getElementById(id);
                     if (target) {
@@ -133,7 +157,6 @@
                 return;
             }
 
-            // Evita comptar dues vegades la mateixa peça
             if (el.getAttribute('position').z === -1.5) return;
 
             var tx = 0, tz = -1.5, ty = 0.13;
@@ -150,20 +173,19 @@
             el.setAttribute('position', {x: tx, y: ty, z: tz});
             pecesColocades++;
 
-            // Quan arribem a les 6 peces: MOSTRAR IMATGE REALISTA
+            // FINALITZACIÓ DEL JOC
             if (pecesColocades >= 6) {
                 setTimeout(function() {
-                    // Amaguem les peces de pràctica
                     Object.keys(posicionsOriginals).forEach(function(id) {
                         document.getElementById(id).setAttribute('visible', false);
                     });
-                    // Mostrem la imatge gegant davant de l'alumne
+                    // Mostra la pantalla final amb la imatge real
                     document.getElementById('pantalla-final').setAttribute('visible', true);
                 }, 500);
             }
         }
 
-        // ACTIVADOR DEL GATELL DE LA PVR
+        // ESCOLTADORS DE CONTROL PER AL GATELL DE LES PVR
         window.addEventListener('click', function() {
             if (objecteEnfocat) mourePeça(objecteEnfocat);
         });
