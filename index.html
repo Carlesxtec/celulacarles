@@ -1,22 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>La Célula 3D - Carles Fdez.</title>
+    <title>La Célula 3D - PWA WebXR</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <link rel="manifest" href="manifest.json">
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-event-set-component@5.0.0/dist/aframe-event-set-component.min.js"></script>
 </head>
 <body>
 
-    <a-scene webxr="optionalFeatures: google-local-floor; referenceSpaceType: local">
+    <a-scene webxr="optionalFeatures: google-local-floor; referenceSpaceType: local-floor">
         
         <a-sky color="#a0c4ff"></a-sky>
-        <a-plane position="0 0 0" rotation="-90 0 0" width="30" height="30" color="#cbd5e1"></a-plane>
+        <a-plane position="0 0 0" rotation="-90 0 0" width="20" height="20" color="#cbd5e1" shadow="receive: true"></a-plane>
         <a-light type="ambient" color="#ffffff" intensity="0.9"></a-light>
+        <a-light type="directional" color="#ffffff" intensity="0.5" position="-1 3 1.5" shadow="cast: true"></a-light>
 
-        <a-entity id="rig">
-            <a-camera id="camera" position="0 1.6 0" look-controls>
+        <a-entity id="rig" position="0 0.1 0">
+            <a-camera id="camera" look-controls position="0 1.6 0">
                 <a-cursor id="cursor-visual"
                           animation__click="property: scale; startEvents: click; easing: easeInCubic; durability: 150; from: 0.1 0.1 0.1; to: 1 1 1"
                           animation__fusing="property: scale; startEvents: fusing; easing: easeInCubic; durability: 1500; from: 1 1 1; to: 0.1 0.1 0.1"
@@ -27,34 +28,44 @@
                 </a-cursor>
             </a-camera>
             
-            <a-entity laser-controls="hand: left" raycaster="objects: .interactiva" line="color: #1abc9c"></a-entity>
-            <a-entity laser-controls="hand: right" raycaster="objects: .interactiva" line="color: #1abc9c"></a-entity>
+            <a-entity laser-controls="hand: left" raycaster="objects: .interactiva" line="color: #1abc9c; opacity: 0.5"></a-entity>
+            <a-entity laser-controls="hand: right" raycaster="objects: .interactiva" line="color: #1abc9c; opacity: 0.5"></a-entity>
         </a-entity>
 
-        <a-entity position="0 1.8 -2.5">
-            <a-text value="LA CELULA EN 3D" align="center" color="#16a085" width="4" font="default" bold="true"></a-text>
-            <a-text value="idea: Carles Fdez." align="center" color="#1e293b" width="3" position="0 -0.35 0" font="default"></a-text>
+        <a-entity id="credits-on-floor" position="0 0.01 -0.8" rotation="-90 0 0">
+            <a-text value="LA CELULA EN 3D" align="center" color="#16a085" width="2.5" font="default" bold="true"></a-text>
+            <a-text value="idea: Carles" align="center" color="#1e293b" width="1.8" position="0 -0.2 0" font="default"></a-text>
         </a-entity>
 
-        <a-box position="0 0.4 -1.8" width="1.6" height="0.1" depth="1" color="#475569"></a-box>
+        <a-box id="mesa-suelo" position="0 0.05 -1.5" width="2" height="0.1" depth="1.2" color="#475569" shadow="receive: true"></a-box>
         
-        <a-cylinder id="base-celula" position="0 0.46 -1.8" radius="0.3" height="0.02" color="#f1f5f9"></a-cylinder>
+        <a-cylinder id="base-celula" position="0 0.11 -1.5" radius="0.35" height="0.02" color="#f1f5f9" opacity="0.9"></a-cylinder>
 
-        <a-sphere class="interactiva" id="nucleo" position="-0.3 0.6 -1.5" radius="0.08" color="#ef4444" arrastrable>
-            <a-text value="Nucleo" align="center" color="#ffffff" width="1.2" position="0 0.15 0"></a-text>
+        <a-sphere class="interactiva" id="nucleo" position="-0.3 0.18 -1.2" radius="0.08" color="#ef4444" arrastrable shadow>
+            <a-text value="Nucleo" align="center" color="#ffffff" width="1" position="0 0.15 0" font="default"></a-text>
         </a-sphere>
 
-        <a-cylinder class="interactiva" id="cloroplasto" position="0.3 0.6 -1.5" radius="0.04" height="0.12" color="#22c55e" arrastrable>
-            <a-text value="Cloroplasto" align="center" color="#ffffff" width="1.2" position="0 0.15 0"></a-text>
-        </a-cylinder>
+        <a-capsule class="interactiva" id="cloroplasto" position="0.3 0.18 -1.2" radius="0.04" length="0.12" color="#22c55e" arrastrable shadow>
+            <a-text value="Cloroplasto" align="center" color="#ffffff" width="1" position="0 0.15 0" font="default"></a-text>
+        </a-capsule>
+
+        <a-capsule class="interactiva" id="mitocondria" position="-0.5 0.18 -1.5" radius="0.03" length="0.08" color="#f97316" arrastrable shadow>
+            <a-text value="Mitocondria" align="center" color="#ffffff" width="1" position="0 0.15 0" font="default"></a-text>
+        </a-capsule>
+
+        <a-box class="interactiva" id="vacuola" position="0.5 0.18 -1.5" width="0.15" height="0.15" depth="0.15" color="#38bdf8" arrastrable shadow>
+            <a-text value="Vacuola" align="center" color="#ffffff" width="1" position="0 0.15 0" font="default"></a-text>
+        </a-box>
 
     </a-scene>
 
     <script>
+        // Lógica de interacción optimizada para gatillo y mirada
         AFRAME.registerComponent('arrastrable', {
             init: function () {
                 var el = this.el;
                 
+                // Efecto visual al mirar o apuntar
                 el.addEventListener('mouseenter', function () {
                     el.setAttribute('scale', '1.2 1.2 1.2');
                 });
@@ -62,15 +73,20 @@
                     el.setAttribute('scale', '1 1 1');
                 });
 
+                // Acción al pulsar el gatillo del mando o mantener la mirada fija
                 el.addEventListener('click', function () {
                     var base = document.querySelector('#base-celula').getAttribute('position');
                     
-                    // Ahora vuelan y se quedan a la nueva altura de la mesa (base.y + 0.05)
-                    if(el.id === "nucleo") {
-                        el.setAttribute('position', {x: base.x, y: base.y + 0.05, z: base.z});
-                    } else if(el.id === "cloroplasto") {
-                        el.setAttribute('position', {x: base.x + 0.1, y: base.y + 0.05, z: base.z - 0.05});
-                    }
+                    // Viaje automático a la base con variación para que no se superpongan
+                    var targetX = base.x;
+                    var targetZ = base.z;
+                    
+                    if(el.id === "nucleo") { targetX += 0; targetZ += 0; }
+                    else if(el.id === "cloroplasto") { targetX += 0.15; targetZ -= 0.1; }
+                    else if(el.id === "mitocondria") { targetX -= 0.15; targetZ -= 0.1; }
+                    else if(el.id === "vacuola") { targetX += 0.1; targetZ += 0.15; }
+                    
+                    el.setAttribute('position', {x: targetX, y: base.y + 0.05, z: targetZ});
                 });
             }
         });
