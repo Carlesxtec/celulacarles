@@ -2,15 +2,15 @@
 <html lang="ca">
 <head>
     <meta charset="utf-8">
-    <title>La Cèl·lula 3D Orgànica - Play For Dream PVR</title>
+    <title>La Cèl·lula 3D - Carles Fdez.</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
 </head>
 <body>
 
     <a-scene webxr="optionalFeatures: google-local-floor; referenceSpaceType: local-floor">
         
-        <a-sky color="#0f172a"></a-slate> 
+        <a-sky color="#0f172a"></a-sky> 
         <a-plane position="0 0 0" rotation="-90 0 0" width="30" height="30" color="#1e293b"></a-plane>
         <a-light type="ambient" color="#ffffff" intensity="0.6"></a-light>
         <a-light type="directional" color="#38bdf8" intensity="0.8" position="1 4 1"></a-light>
@@ -21,27 +21,17 @@
                           raycaster="objects: .interactiva"
                           material="color: #38bdf8; shader: flat"
                           position="0 0 -1"
-                          geometry="primitive: ring; radiusInner: 0.015; radiusOuter: 0.025">
+                          geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+                          cursor="fuse: false; rayOrigin: mouse">
                 </a-cursor>
             </a-camera>
-            
-            <a-entity id="leftHand" 
-                      tracked-controls="hand: left; iterateObject3D: true"
-                      raycaster="objects: .interactiva; showLine: true" 
-                      line="color: #38bdf8; opacity: 0.8"
-                      generic-tracked-controller-controls="hand: left">
-            </a-entity>
-            
-            <a-entity id="rightHand" 
-                      tracked-controls="hand: right; iterateObject3D: true"
-                      raycaster="objects: .interactiva; showLine: true" 
-                      line="color: #38bdf8; opacity: 0.8"
-                      generic-tracked-controller-controls="hand: right">
-            </a-entity>
+
+            <a-entity oculus-touch-controls="hand: left"></a-entity>
+            <a-entity oculus-touch-controls="hand: right"></a-entity>
         </a-entity>
 
         <a-entity id="credits-on-floor" position="0 0.01 -0.6" rotation="-90 0 0">
-            <a-text value="LA CEL.LULA EN 3D" align="center" color="#38bdf8" width="2" bold="true"></a-text>
+            <a-text value="LA CEL.LULA EN 3D" align="center" color="#38bdf8" width="2" bold="true" font="k領s"></a-text>
             <a-text value="idea: Carles Fdez." align="center" color="#94a3b8" width="1.4" position="0 -0.15 0"></a-text>
         </a-entity>
 
@@ -98,7 +88,7 @@
     </a-scene>
 
     <script>
-        // Posicions de retorn de seguretat
+        // Taula de posicions inicials fixes
         const posicionsOriginals = {
             "obj-nucli": {x: -0.4, y: 0.15, z: -1.1},
             "obj-cloroplast": {x: 0.4, y: 0.15, z: -1.1},
@@ -108,12 +98,12 @@
             "obj-paret": {x: 0.4, y: 0.15, z: -1.7}
         };
 
-        // Component d'interacció universal per a disparar esdeveniments de clic i moure peces
+        // Lògica de moviment estable i directa
         AFRAME.registerComponent('arrastrable', {
             init: function () {
                 var el = this.el;
                 
-                // Animació visual en passar el punter per sobre
+                // Efecte visual al mirar l'element
                 el.addEventListener('mouseenter', function () { 
                     el.setAttribute('scale', '1.1 1.1 1.1'); 
                 });
@@ -121,20 +111,20 @@
                     el.setAttribute('scale', '1 1 1'); 
                 });
 
-                // Moviment immediat en prémer el gatell del comandament PVR o mirar fixament
+                // En clicar (Ja sigui prement el gatell del comandament o fent clic a la pantalla)
                 el.addEventListener('click', function () {
                     var tx = 0; 
-                    var tz = -1.5; // Centre del citoplasma
+                    var tz = -1.5; 
                     var ty = 0.13;
                     
                     if(el.id === "obj-nucli") { tx = 0; tz = -1.5; ty = 0.15; }
                     else if(el.id === "obj-vacuola") { tx = 0.16; tz = -1.55; }
-                    else if(el.id === "obj-cloroplast") { tx = 0.14; tz = -1.38; }
+                    else if(el.id === "obj-cloroplast") { tx = 0.14; tz = -1.40; }
                     else if(el.id === "obj-mitocondri") { tx = -0.16; tz = -1.55; }
-                    else if(el.id === "obj-membrana") { tx = -0.14; tz = -1.38; }
+                    else if(el.id === "obj-membrana") { tx = -0.14; tz = -1.40; }
                     else if(el.id === "obj-paret") { 
                         tx = 0; tz = -1.5; ty = 0.12;
-                        el.setAttribute('scale', '5.4 1 5.4');
+                        el.setAttribute('scale', '5.4 1 5.4'); 
                     }
                     
                     el.setAttribute('position', {x: tx, y: ty, z: tz});
@@ -142,7 +132,16 @@
             }
         });
 
-        // LÒGICA DEL BOTÓ REINICIAR
+        // Escoltador global per enllaçar el gatell del comandament físic al clic de la cèl·lula
+        window.addEventListener('triggerdown', function () {
+            var cursor = document.querySelector('#cursor-visual');
+            if (cursor && cursor.components.cursor) {
+                // Força un clic virtual exactament allà on l'alumne estigui mirant en aquell moment
+                cursor.components.cursor.onCursorRenderedClick();
+            }
+        });
+
+        // REINICIAR (Torna tot al seu lloc original a la taula)
         document.getElementById('btn-reiniciar').addEventListener('click', function() {
             Object.keys(posicionsOriginals).forEach(function(id) {
                 var target = document.getElementById(id);
